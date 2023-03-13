@@ -1,0 +1,48 @@
+Startup
+=======
+
+To login: ssh pi@raspberrypi.local
+password: raspberry (default)
+
+# GPS
+
+Docs: Set up GPS as a time service for the OS. We use chronyc to check status
+https://gpsd.gitlab.io/gpsd/gpsd-time-service-howto.html
+
+In short, 
+At boot run
+sudo gpsd -n /dev/ttyS0
+Then check cgps for gps lock
+And chronyc sources -v to check that the system clock is being updated from the PPS
+May take a minute to get the PPS lock.
+
+# Data collection
+
+Make sure "ps aux | grep adc" does not show our python ADC read process. It is started by /etc/rc.local but sometimes crashes. If it's running, kill it.
+
+Then run
+cd ~/Desktop/DATA
+nohup /usr/bin/python3 -u /home/pi/Desktop/data_collect.py &
+
+
+sudo ln -sf /usr/share/zoneinfo/UTC /etc/localtime
+
+Troublshooting:
+
+
+serial.serialutil.SerialException: [Errno 2] could not open port /dev/ttyACM0: [Errno 2] No such file or directory: '/dev/ttyACM0'
+Test: Reboot
+
+ls -l /dev
+lsusb
+
+
+
+Crontab setup:
+@reboot /usr/bin/python3 -u /home/pi/Desktop/adc_test.py & > /home/pi/Desktop/cronlog.txt
+@reboot sleep 20 && sudo kill -kill $(ps aux | grep 'adc_test.py' | awk '{print $2}')
+@reboot sleep 30 && sudo gpsd -n /dev/ttyS0
+@reboot sleep 60 && nohup /usr/bin/python3 -u /home/pi/Desktop/data_collect.py >> /home/pi/Desktop/SA_log.out &
+*/15 * * * * /home/pi/Desktop/cronjobs_help.sh >> /home/pi/Desktop/cronlog.out &
+
+
