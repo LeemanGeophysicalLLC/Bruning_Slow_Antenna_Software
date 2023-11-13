@@ -21,12 +21,46 @@ else
   do_the_action
 fi
 
+#PIDFILE="/tmp/action1.pid"
 
-##Make sure that the following  lines are added to the cron job list using the following command to open and edit cron jobs:
-#crontab -e
+#create_pidfile ()
+#{
+#  echo $$ > "$PIDFILE"
+#  date + "PIDFILE CREATED at %H:%M:%S"
+#}
 
-#@reboot /usr/bin/python3 -u /home/pi/Desktop/adc_test.py & > /home/pi/Desktop/cronlog.txt
-#@reboot sleep 20 && sudo kill -kill $(ps aux | grep 'adc_test.py' | awk '{print $2}')
-#@reboot sleep 30 && sudo gpsd -n /dev/ttyS0
-#@reboot sleep 60 && nohup /usr/bin/python3 -u /home/pi/Desktop/data_collect.py >> /home/pi/Desktop/SA_log.out &
-#*/15 * * * * /home/pi/Desktop/cronjobs_help.sh >> /home/pi/Desktop/cronlog.out &
+#remove_pidfile ()
+#{
+#  [ -f "$PIDFILE" ] && rm "$PIDFILE"
+#  date + "PIDFILE REMOVED AT %H:%M:%S"
+#}
+
+
+#previous_instance_active ()
+#{
+#  local prevpid
+#  if [ -f "$PIDFILE" ]
+#    "PID FILE IS NOT HERE"
+#  then
+#    prevpid=$(cat "$PIDFILE")
+#    kill -0 $prevpid
+#    date + "DATA STILL COLLECTING AT %H:%M:%S"
+#  else
+#    false
+#  fi
+#}
+
+
+#if previous_instance_active
+#then
+#  echo date + 'PID: $$ Previous instance is still active at %H:%M:%S'
+#else
+#  trap remove_pidfile EXIT
+#  create_pidfile
+#  /usr/bin/python3 -u /home/pi/Desktop/adc_test.py > /home/pi/Desktop/cronlog.txt &
+#  sleep 20 && sudo kill -kill $(ps aux | grep 'adc_test.py' | awk '{print $2}')
+#  sleep 30 && sudo gpsd -n /dev/ttyS0
+#  sleep 60 && nohup /usr/bin/python3 -u /home/pi/Desktop/data_collect.py > /home/pi/Desktop/SA_log.out &
+#  date +"Restarted: PID: $$ Action started at %H:%M:%S"
+#fi
+

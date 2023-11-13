@@ -2,13 +2,8 @@ import serial
 import RPi.GPIO as GPIO
 from time import sleep
 import numpy as np
-#import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 import struct
-import datetime
-import os.path
-
-save_path ='/home/pi/Desktop/DATA/' 
-
 
 def convert_adc_to_decimal(value):
     modulo = 1 << 24
@@ -48,14 +43,12 @@ def decode_data_packet(mp):
     
 SERIAL_SPEED = 2000000
 
-#def do_run(bytes_to_read=972000000):
-def do_run(bytes_to_read=38880000000):
-    stamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S_%f") 
-    print(stamp)    
+
+
+def do_run(bytes_to_read=100000):
     ser = serial.Serial('/dev/ttyACM0', SERIAL_SPEED, timeout=1)
     ser.flush()
     bytes_read = 0
-    byte_count_since_last_write = 0
     bytes_data = bytearray()
     waiting = []
     while bytes_read < bytes_to_read:
@@ -63,32 +56,12 @@ def do_run(bytes_to_read=38880000000):
         s = ser.read(bytes_available)
         #s = ser.read(1)
         bytes_data += s
-       # byte_count_since_last_write += s
-        if (byte_count_since_last_write >= 27000000):
-            print('writing file')
-            if stamp is not None:
-                name = os.path.join(save_path,stamp + '.raw')
-                with open(name, mode='wb') as file:
-                    file.write(bytes_data)
-                stamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S_%f") #None
-            else:
-                name = os.path.join(save_path,datetime.datetime.now().strftime("%Y%m%d%H%M%S_%f") + '.raw')
-                with open(name, mode='wb') as file:
-                    file.write(bytes_data)
-            print(name)
-            bytes_data = bytearray()
-            byte_count_since_last_write = 0
-            print(ser.in_waiting)
         #bytes_read += 1
         bytes_read += bytes_available
-        byte_count_since_last_write += bytes_available
         #if (bytes_read % 5000) == 0:
-           
-        #print(bytes_read, bytes_available)    
-        
-    ser.close()
+        print(bytes_read, bytes_available)
+    ser.close
     return bytes_data
-
 
 pin_relay_a = 5
 pin_relay_b = 6
@@ -149,15 +122,24 @@ print(adc.shape, adc.dtype)
 delta_t_adc = (adc_ready[-1]-adc_ready[0])*1e-6
 sample_rate = adc_ready.shape[0]/delta_t_adc
 print(f"Elapsed time {delta_t_adc:6.3} s with sample rate {sample_rate:6.1f} Hz")
+fig, axs = plt.subplots(2,2, sharex=True)
+axs[0,1].plot(adc_ready-adc_ready[0])
+axs[0,1].set_title('ADC ready microsecond')
 
-name = datetime.datetime.now().strftime("%Y%m%d%H%M%S") + '.txt'
+axs[1,1].plot(adc)
+axs[1,1].set_title('ADC')
 
-print('done with file')
+axs[0,0].plot(starts)
+axs[0,0].set_title('Starts')
+
+axs[1,0].plot(end)
+axs[1,0].set_title('Ends')
+
+#plt.plot(adc)
+plt.show()
 
 GPIO.output(pin_relay_a, GPIO.LOW)
 GPIO.output(pin_relay_b, GPIO.LOW)
 GPIO.output(pin_relay_c, GPIO.LOW)
 
 GPIO.cleanup()
-
-

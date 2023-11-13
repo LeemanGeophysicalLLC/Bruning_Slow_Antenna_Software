@@ -36,7 +36,30 @@ Test: Reboot
 ls -l /dev
 lsusb
 
+Troubleshooting for memory issues:
 
+Empty trash: 
+cd ~/.local/share/Trash/files 
+rm -r *\
+
+
+Check how much memory is available: \
+df -h\
+
+Check where the largest folders are:
+
+sudo du -xh / | grep -P "G\\t"\
+
+
+sudo raspi-config
+-advanced options 
+-expand memory
+
+
+Power Issues: 
+
+
+ExecStartPost=sudo kill -kill $(ps aux | grep 'data_collect.py' | awk '{print $2}')
 
 Crontab setup:
 @reboot /usr/bin/python3 -u /home/pi/Desktop/adc_test.py & > /home/pi/Desktop/cronlog.txt
