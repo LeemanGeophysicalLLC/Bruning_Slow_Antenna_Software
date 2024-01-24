@@ -1,12 +1,8 @@
 [Unit]
 Description=Collect slow antenna data from ADC
-After=syslog.target
 
 [Service]
 ExecStart=/usr/bin/python3 -u data_collect.py >> SA_log.out
 Restart=always
 User=pi
 SyslogIdentifier=adc_data_collect
-
-[Install]
-WantedBy=multi-user.target
