@@ -1,0 +1,12 @@
+[Unit]
+Description=Update clock with chronyc
+After=syslog.target
+
+[Service]
+ExecStart=chronyc -a makestep
+Restart=always
+User=root
+SyslogIdentifier=update_clock_gps
+
+[Install]
+WantedBy=multi-user.target
