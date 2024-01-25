@@ -3,7 +3,7 @@ Description=Run gpsd on serial port 0
 After=syslog.target
 
 [Service]
-ExecStart=gpsd -n /dev/ttyS0
+ExecStart=gpsd -Nn /dev/ttyS0
 Restart=always
 User=root
 SyslogIdentifier=gpsd_serial_s0
