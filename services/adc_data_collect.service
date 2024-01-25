@@ -4,6 +4,7 @@ After=update_clock_gps.service
 
 [Service]
 ExecStart=/usr/bin/python3 -u data_collect.py >> SA_log.out
+WorkingDirectory=/home/pi/Desktop/
 Restart=always
 User=pi
 SyslogIdentifier=adc_data_collect

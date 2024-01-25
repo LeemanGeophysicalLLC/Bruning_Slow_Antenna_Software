@@ -4,7 +4,7 @@ After=syslog.target
 
 [Service]
 ExecStart=/usr/bin/python3 -u adc_test.py >> systemd.out
-WorkingDirectory=/home/pi/
+WorkingDirectory=/home/pi/Desktop/
 RuntimeMaxSec=20
 User=pi
 SyslogIdentifier=adc_test_startup

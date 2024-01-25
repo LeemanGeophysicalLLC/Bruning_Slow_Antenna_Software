@@ -4,7 +4,7 @@ After=gpsd_serial_s0.service
 
 [Service]
 ExecStart=/bin/bash check_gps_fix.sh
-WorkingDirectory=/home/pi/
+WorkingDirectory=/home/pi/Desktop/
 User=root
 SyslogIdentifier=gps_fix_watcher
 
