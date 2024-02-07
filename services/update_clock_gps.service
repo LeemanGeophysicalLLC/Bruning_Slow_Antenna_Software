@@ -3,7 +3,5 @@ Description=Update clock with chronyc
 
 [Service]
 ExecStart=chronyc -a makestep
-Restart=always
-RestartSec=600
 User=root
 SyslogIdentifier=update_clock_gps

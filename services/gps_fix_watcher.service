@@ -7,6 +7,8 @@ ExecStart=/bin/bash -c "gpspipe -w | /usr/bin/python3 check_fix_gps.py"
 WorkingDirectory=/home/pi/Desktop/
 User=root
 SyslogIdentifier=gps_fix_watcher
+Restart=always
+RestartSec=600
 
 [Install]
 WantedBy=multi-user.target
