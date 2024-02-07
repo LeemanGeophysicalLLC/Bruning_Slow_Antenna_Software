@@ -6,6 +6,12 @@ import json
 from os import system
 from time import sleep
 import datetime
+import RPi.GPIO as GPIO
+
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(26, GPIO.OUT)
+GPIO.output(26, GPIO.LOW)
+
 
 try:
     while True:
@@ -21,6 +27,7 @@ try:
             if sentence['mode'] == 2  or sentence['mode'] == 3:
                 current_time = datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')
                 print(f'[{current_time}] GPS fixed, updating clock')
+                GPIO.output(26, GPIO.HIGH)
                 system('systemctl start update_clock_gps.service')
                 while True:
                     if system('systemctl status update_clock_gps') != 0:
