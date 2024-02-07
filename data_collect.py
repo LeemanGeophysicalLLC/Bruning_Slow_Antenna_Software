@@ -55,7 +55,7 @@ SERIAL_SPEED = 2000000
 
 #def do_run(bytes_to_read=972000000):
 def do_run(bytes_to_read=38880000000):
-    stamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S_%f") 
+    stamp = datetime.datetime.utcnow().strftime("%Y%m%d%H%M%S_%f") 
     print(stamp)    
     ser = serial.Serial('/dev/ttyACM0', SERIAL_SPEED, timeout=1)
     ser.flush()
@@ -75,9 +75,9 @@ def do_run(bytes_to_read=38880000000):
                 name = os.path.join(save_path,stamp + '.raw')
                 with open(name, mode='wb') as file:
                     file.write(bytes_data)
-                stamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S_%f") #None
+                stamp = datetime.datetime.utcnow().strftime("%Y%m%d%H%M%S_%f") #None
             else:
-                name = os.path.join(save_path,datetime.datetime.now().strftime("%Y%m%d%H%M%S_%f") + '.raw')
+                name = os.path.join(save_path,datetime.datetime.utcnow().strftime("%Y%m%d%H%M%S_%f") + sys.argv[-1] + '.raw')
                 with open(name, mode='wb') as file:
                     file.write(bytes_data)
             print(name)
@@ -165,5 +165,3 @@ GPIO.output(pin_relay_b, GPIO.LOW)
 GPIO.output(pin_relay_c, GPIO.LOW)
 
 GPIO.cleanup()
-
-
