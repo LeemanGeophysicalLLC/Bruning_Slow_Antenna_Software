@@ -156,7 +156,7 @@ delta_t_adc = (adc_ready[-1]-adc_ready[0])*1e-6
 sample_rate = adc_ready.shape[0]/delta_t_adc
 print(f"Elapsed time {delta_t_adc:6.3} s with sample rate {sample_rate:6.1f} Hz")
 
-name = datetime.datetime.now().strftime("%Y%m%d%H%M%S") + sys.argv[-1] + '.txt'
+name = datetime.datetime.now(datetime.UTC).strftime("%Y%m%d%H%M%S") + sys.argv[-1] + '.txt'
 
 print('done with file')
 
