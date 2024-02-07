@@ -6,6 +6,11 @@ import numpy as np
 import struct
 import datetime
 import os.path
+import sys
+
+if '-a' not in sys.argv and '-b' not in sys.argv and '-c' not in sys.argv:
+    print('Error: must specify -a, -b, or -c for which relay to use')
+    exit(1)
 
 save_path ='/home/pi/Desktop/DATA/' 
 
@@ -108,9 +113,10 @@ GPIO.setup(pin_overflow_serial, GPIO.IN)
 
 #print(do_run())
 
-GPIO.output(pin_relay_a, GPIO.LOW)
-GPIO.output(pin_relay_b, GPIO.LOW)
-GPIO.output(pin_relay_c, GPIO.HIGH)
+GPIO.output(pin_relay_a, GPIO.HIGH) if sys.argv[-1] == '-a' else GPIO.output(pin_relay_a, GPIO.LOW)
+GPIO.output(pin_relay_b, GPIO.HIGH) if sys.argv[-1] == '-b' else GPIO.output(pin_relay_b, GPIO.LOW)
+GPIO.output(pin_relay_c, GPIO.HIGH) if sys.argv[-1] == '-c' else GPIO.output(pin_relay_c, GPIO.LOW)
+
 sleep(2)
 ba = do_run()
 #ba = bytearray(ba)
@@ -150,7 +156,7 @@ delta_t_adc = (adc_ready[-1]-adc_ready[0])*1e-6
 sample_rate = adc_ready.shape[0]/delta_t_adc
 print(f"Elapsed time {delta_t_adc:6.3} s with sample rate {sample_rate:6.1f} Hz")
 
-name = datetime.datetime.now().strftime("%Y%m%d%H%M%S") + '.txt'
+name = datetime.datetime.now().strftime("%Y%m%d%H%M%S") + sys.argv[-1] + '.txt'
 
 print('done with file')
 
