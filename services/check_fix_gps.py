@@ -20,13 +20,19 @@ try:
         if sentence['class'] == 'TPV':
             if sentence['mode'] == 2  or sentence['mode'] == 3:
                 current_time = datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')
-                print(f'[{current_time} GPS fixed, updating clock')
+                print(f'[{current_time}] GPS fixed, updating clock')
                 system('systemctl start update_clock_gps.service')
                 while True:
-                    if system('systemctl status update_clock_gps') != 0 and system('systemctl status adc_test_startup') != 0:
+                    if system('systemctl status update_clock_gps') != 0:
                         current_time = datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')
-                        print(f'[{current_time} Clock updated and ADC test not running, starting data collect')
-                        system('systemctl start adc_data_collect')
+                        print(f'[{current_time}] Clock updated successfully')
+                        while True:
+                            if system('systemctl status adc_test_startup') != 0:
+                                print('ADC test startup not active, starting data collection')
+                                system('systemctl start adc_data_collect')
+                                break
+                            else:
+                                sleep(1)
                         break
                     else:
                         sleep(1)
