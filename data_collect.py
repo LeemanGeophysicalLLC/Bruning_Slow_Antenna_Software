@@ -6,11 +6,8 @@ import numpy as np
 import struct
 import datetime
 import os.path
-import sys
 
-if '-a' not in sys.argv and '-b' not in sys.argv and '-c' not in sys.argv:
-    print('Error: must specify -a, -b, or -c for which relay to use')
-    exit(1)
+use_relay = 'a'
 
 save_path ='/home/pi/Desktop/DATA/' 
 
@@ -77,7 +74,7 @@ def do_run(bytes_to_read=38880000000):
                     file.write(bytes_data)
                 stamp = datetime.datetime.utcnow().strftime("%Y%m%d%H%M%S_%f") #None
             else:
-                name = os.path.join(save_path,datetime.datetime.utcnow().strftime("%Y%m%d%H%M%S_%f") + sys.argv[-1] + '.raw')
+                name = os.path.join(save_path,datetime.datetime.utcnow().strftime("%Y%m%d%H%M%S_%f") + use_relay + '.raw')
                 with open(name, mode='wb') as file:
                     file.write(bytes_data)
             print(name)
@@ -113,9 +110,9 @@ GPIO.setup(pin_overflow_serial, GPIO.IN)
 
 #print(do_run())
 
-GPIO.output(pin_relay_a, GPIO.HIGH) if sys.argv[-1] == '-a' else GPIO.output(pin_relay_a, GPIO.LOW)
-GPIO.output(pin_relay_b, GPIO.HIGH) if sys.argv[-1] == '-b' else GPIO.output(pin_relay_b, GPIO.LOW)
-GPIO.output(pin_relay_c, GPIO.HIGH) if sys.argv[-1] == '-c' else GPIO.output(pin_relay_c, GPIO.LOW)
+GPIO.output(pin_relay_a, GPIO.HIGH) if use_relay == 'a' else GPIO.output(pin_relay_a, GPIO.LOW)
+GPIO.output(pin_relay_b, GPIO.HIGH) if use_relay == 'b' else GPIO.output(pin_relay_b, GPIO.LOW)
+GPIO.output(pin_relay_c, GPIO.HIGH) if use_relay == 'c' else GPIO.output(pin_relay_c, GPIO.LOW)
 
 sleep(2)
 ba = do_run()
@@ -156,7 +153,7 @@ delta_t_adc = (adc_ready[-1]-adc_ready[0])*1e-6
 sample_rate = adc_ready.shape[0]/delta_t_adc
 print(f"Elapsed time {delta_t_adc:6.3} s with sample rate {sample_rate:6.1f} Hz")
 
-name = datetime.datetime.utcnow().strftime("%Y%m%d%H%M%S") + sys.argv[-1] + '.txt'
+name = datetime.datetime.utcnow().strftime("%Y%m%d%H%M%S") + use_relay + '.txt'
 
 print('done with file')
 
