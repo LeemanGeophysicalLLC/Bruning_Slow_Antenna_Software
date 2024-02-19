@@ -8,7 +8,7 @@ WorkingDirectory=/home/pi/Desktop/
 User=root
 SyslogIdentifier=gps_fix_watcher
 Restart=always
-RestartSec=600
+RestartSec=60
 
 [Install]
 WantedBy=multi-user.target
