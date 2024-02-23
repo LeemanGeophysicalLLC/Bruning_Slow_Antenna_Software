@@ -78,6 +78,7 @@ def do_run(bytes_to_read=38880000000):
                 with open(name, mode='wb') as file:
                     file.write(bytes_data)
             print(name)
+            GPIO.output(pin_LED, GPIO.HIGH)
             bytes_data = bytearray()
             byte_count_since_last_write = 0
             print(ser.in_waiting)
@@ -95,6 +96,7 @@ def do_run(bytes_to_read=38880000000):
 pin_relay_a = 5
 pin_relay_b = 6
 pin_relay_c = 13
+pin_LED = 19
 pin_overflow_buffer = 10
 pin_overflow_serial = 11
 
@@ -102,6 +104,7 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setup(pin_relay_a, GPIO.OUT)
 GPIO.setup(pin_relay_b, GPIO.OUT)
 GPIO.setup(pin_relay_c, GPIO.OUT)
+GPIO.setup(pin_LED, GPIO.OUT)
 GPIO.setup(pin_overflow_buffer, GPIO.IN)
 GPIO.setup(pin_overflow_serial, GPIO.IN)
 
