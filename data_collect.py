@@ -66,15 +66,15 @@ def do_run(bytes_to_read=38880000000):
         #s = ser.read(1)
         bytes_data += s
        # byte_count_since_last_write += s
-        if (byte_count_since_last_write >= 27000000):
+        if (byte_count_since_last_write >= 5400000): #27000000):
             print('writing file')
             if stamp is not None:
-                name = os.path.join(save_path,stamp + '.raw')
+                name = os.path.join(save_path,stamp + '_' + use_relay + '.raw')
                 with open(name, mode='wb') as file:
                     file.write(bytes_data)
                 stamp = datetime.datetime.utcnow().strftime("%Y%m%d%H%M%S_%f") #None
             else:
-                name = os.path.join(save_path,datetime.datetime.utcnow().strftime("%Y%m%d%H%M%S_%f") + use_relay + '.raw')
+                name = os.path.join(save_path,datetime.datetime.utcnow().strftime("%Y%m%d%H%M%S_%f") + '_' + use_relay + '.raw')
                 with open(name, mode='wb') as file:
                     file.write(bytes_data)
             print(name)
@@ -156,7 +156,7 @@ delta_t_adc = (adc_ready[-1]-adc_ready[0])*1e-6
 sample_rate = adc_ready.shape[0]/delta_t_adc
 print(f"Elapsed time {delta_t_adc:6.3} s with sample rate {sample_rate:6.1f} Hz")
 
-name = datetime.datetime.utcnow().strftime("%Y%m%d%H%M%S") + use_relay + '.txt'
+name = datetime.datetime.utcnow().strftime("%Y%m%d%H%M%S") + '_' + use_relay + '.txt'
 
 print('done with file')
 
