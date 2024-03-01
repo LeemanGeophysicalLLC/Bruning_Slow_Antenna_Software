@@ -6,11 +6,25 @@ import numpy as np
 import struct
 import datetime
 import os.path
+from os import listdir
 
 use_relay = 'a'
-
+mins_before_write = 1
 save_path ='/home/pi/Desktop/DATA/' 
 
+
+
+write_success = False
+for file in reversed(sorted(listdir(save_path))):
+    try:
+        this_file_dt = datetime.datetime.strptime(file.split('_')[0], '%Y%m%d%H%M%S')
+    except Exception as e:
+        print(str(e))
+        continue
+    if this_file_dt + datetime.timedelta(seconds=mins_before_write*60) > datetime.datetime.utcnow() - datetime.timedelta(seconds=mins_before_write*60+30):
+        write_success = True
+        break
+bytes_before_write = 5400000*mins_before_write
 
 def convert_adc_to_decimal(value):
     modulo = 1 << 24
@@ -52,6 +66,8 @@ SERIAL_SPEED = 2000000
 
 #def do_run(bytes_to_read=972000000):
 def do_run(bytes_to_read=38880000000):
+    global write_success
+    global pin_LED_status
     stamp = datetime.datetime.utcnow().strftime("%Y%m%d%H%M%S_%f") 
     print(stamp)    
     ser = serial.Serial('/dev/ttyACM0', SERIAL_SPEED, timeout=1)
@@ -66,7 +82,14 @@ def do_run(bytes_to_read=38880000000):
         #s = ser.read(1)
         bytes_data += s
        # byte_count_since_last_write += s
-        if (byte_count_since_last_write >= 5400000): #27000000):
+        if write_success:
+            if pin_LED_status == 1000:
+                GPIO.output(pin_LED, GPIO.LOW)
+                pin_LED_status = -1
+            elif pin_LED_status == 500:
+                GPIO.output(pin_LED, GPIO.HIGH)
+            pin_LED_status += 1
+        if (byte_count_since_last_write >= bytes_before_write): #27000000):
             print('writing file')
             if stamp is not None:
                 name = os.path.join(save_path,stamp + '_' + use_relay + '.raw')
@@ -78,7 +101,7 @@ def do_run(bytes_to_read=38880000000):
                 with open(name, mode='wb') as file:
                     file.write(bytes_data)
             print(name)
-            GPIO.output(pin_LED, GPIO.HIGH)
+            write_success = True
             bytes_data = bytearray()
             byte_count_since_last_write = 0
             print(ser.in_waiting)
@@ -116,6 +139,8 @@ GPIO.setup(pin_overflow_serial, GPIO.IN)
 GPIO.output(pin_relay_a, GPIO.HIGH) if use_relay == 'a' else GPIO.output(pin_relay_a, GPIO.LOW)
 GPIO.output(pin_relay_b, GPIO.HIGH) if use_relay == 'b' else GPIO.output(pin_relay_b, GPIO.LOW)
 GPIO.output(pin_relay_c, GPIO.HIGH) if use_relay == 'c' else GPIO.output(pin_relay_c, GPIO.LOW)
+GPIO.output(pin_LED, GPIO.LOW)
+pin_LED_status = False
 
 sleep(2)
 ba = do_run()
