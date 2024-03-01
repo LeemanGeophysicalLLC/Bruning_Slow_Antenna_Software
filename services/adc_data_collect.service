@@ -7,3 +7,5 @@ WorkingDirectory=/home/pi/Desktop/
 Restart=always
 User=pi
 SyslogIdentifier=adc_data_collect
+StandardError=append:/home/pi/Desktop/SA_log.out
+StandardOutput=append:/home/pi/Desktop/SA_log.out
