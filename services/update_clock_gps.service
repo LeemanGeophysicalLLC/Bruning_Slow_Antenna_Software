@@ -1,0 +1,7 @@
+[Unit]
+Description=Update clock with chronyc
+
+[Service]
+ExecStart=chronyc -a makestep
+User=root
+SyslogIdentifier=update_clock_gps

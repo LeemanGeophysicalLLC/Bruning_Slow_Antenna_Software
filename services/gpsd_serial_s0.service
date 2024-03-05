@@ -1,0 +1,12 @@
+[Unit]
+Description=Run gpsd on serial port 0
+After=syslog.target
+
+[Service]
+ExecStart=gpsd -Nn /dev/ttyS0
+Restart=always
+User=root
+SyslogIdentifier=gpsd_serial_s0
+
+[Install]
+WantedBy=multi-user.target

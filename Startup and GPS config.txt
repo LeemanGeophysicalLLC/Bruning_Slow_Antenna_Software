@@ -36,9 +36,30 @@ Test: Reboot
 ls -l /dev
 lsusb
 
+Troubleshooting for memory issues:
+
+Empty trash: 
+cd ~/.local/share/Trash/files 
+rm -r *\
 
 
-Crontab setup:
+Check how much memory is available: \
+df -h\
+
+Check where the largest folders are:
+
+sudo du -xh / | grep -P "G\\t"\
+
+
+sudo raspi-config
+-advanced options 
+-expand memory
+
+
+Power Issues: 
+
+
+[old] Crontab setup:
 @reboot /usr/bin/python3 -u /home/pi/Desktop/adc_test.py & > /home/pi/Desktop/cronlog.txt
 @reboot sleep 20 && sudo kill -kill $(ps aux | grep 'adc_test.py' | awk '{print $2}')
 @reboot sleep 30 && sudo gpsd -n /dev/ttyS0
@@ -46,3 +67,13 @@ Crontab setup:
 */15 * * * * /home/pi/Desktop/cronjobs_help.sh >> /home/pi/Desktop/cronlog.out &
 
 
+
+Systemd setup instructions:
+1. copy all the ".service" files in services/ to /etc/systemd/system/
+2. set the adc_test_startup, gpsd_serial_s0, and gps_fix_watcher services to run at boot by running
+
+sudo systemctl enable adc_test_startup
+sudo systemctl enable gpsd_serial_s0
+sudo systemctl enable gps_fix_watcher
+
+3. Ensure services/check_fix_gps.py, adc_test.py, and data_collect.py exist in /home/pi/Desktop
