@@ -1,0 +1,14 @@
+[Unit]
+Description=Wait for GPS fix
+After=gpsd_serial_s0.service
+
+[Service]
+ExecStart=/bin/bash -c "gpspipe -w | /usr/bin/python3 check_fix_gps.py"
+WorkingDirectory=/home/pi/Desktop/
+User=root
+SyslogIdentifier=gps_fix_watcher
+Restart=always
+RestartSec=60
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,52 @@
+#!/usr/bin/env python3
+
+import sys
+import errno
+import json
+from os import system
+from time import sleep
+import datetime
+import RPi.GPIO as GPIO
+
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(26, GPIO.OUT)
+GPIO.output(26, GPIO.LOW)
+
+
+try:
+    while True:
+        # intended to have gpspipe -w piped to stdin
+        line = sys.stdin.readline()
+        if not line:
+            # parent proc is dead, exit
+            break
+        # read json gpspipe data
+        sentence = json.loads(line)
+        # Filter to mode 2 (2d fix) and mode 3 (3d fix)
+        if sentence['class'] == 'TPV':
+            if sentence['mode'] == 2  or sentence['mode'] == 3:
+                current_time = datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')
+                print(f'[{current_time}] GPS fixed, updating clock')
+                GPIO.output(26, GPIO.HIGH)
+                system('systemctl start update_clock_gps.service')
+                while True:
+                    if system('systemctl status update_clock_gps') != 0:
+                        current_time = datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')
+                        print(f'[{current_time}] Clock updated successfully')
+                        while True:
+                            if system('systemctl status adc_test_startup') != 0:
+                                print('ADC test startup not active, starting data collection')
+                                system('systemctl start adc_data_collect')
+                                break
+                            else:
+                                sleep(1)
+                        break
+                    else:
+                        sleep(1)
+                break
+except IOError as e:
+    # this was stolen from stackoverflow and probably has a good reason to be here
+    if e.errno == errno.EPIPE:
+        pass
+    else:
+        raise e

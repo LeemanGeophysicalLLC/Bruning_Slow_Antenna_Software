@@ -1,0 +1,13 @@
+[Unit]
+Description=Test ADC at system startup
+After=syslog.target
+
+[Service]
+ExecStart=/usr/bin/python3 -u adc_test.py
+WorkingDirectory=/home/pi/Desktop
+RuntimeMaxSec=20
+User=pi
+SyslogIdentifier=adc_test_startup
+
+[Install]
+WantedBy=multi-user.target
